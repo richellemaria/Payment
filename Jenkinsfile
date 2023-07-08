@@ -2,4 +2,4 @@
 
 env.COMPONENT="payment"
 env.APP_TYPE="python"
-java()
+python()
