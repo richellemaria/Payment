@@ -2,9 +2,9 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: paymet
+  name: payment
   labels:
-    app: paymet
+    app: payment
 spec:
   replicas: 3
   strategy: 
@@ -14,20 +14,20 @@ spec:
       maxSurge: 20
   selector:
     matchLabels:
-      app: paymet
+      app: payment
   template:
     metadata:
       labels:
-        app: paymet
+        app: payment
     spec:
       containers:
-      - name: paymet
-        image: 355449129696.dkr.ecr.us-east-1.amazonaws.com/paymet:001
+      - name: payment
+        image: 355449129696.dkr.ecr.us-east-1.amazonaws.com/payment:001
         ports:
         - containerPort: 8080
         envFrom:
           - configMapRef:
-                name: paymet-configmap
+                name: payment-configmap
 
 ---
 
@@ -46,10 +46,10 @@ data:
 apiVersion: v1
 kind: Service
 metadata:
-  name: paymet-svc
+  name: payment-svc
 spec:
   selector:
-     app: paymet
+     app: payment
   ports:
     - protocol: TCP
       port: 8080                         # Port number that your service has to listen and this is the port you will access
@@ -60,7 +60,7 @@ spec:
 apiVersion: networking.k8s.io/v1
 kind: Ingress
 metadata:
-  name: paymet-ingress
+  name: payment-ingress
 spec:
   rules:
   - host: robot-frontend.b54-roboshop.online
@@ -70,7 +70,7 @@ spec:
         pathType: Prefix
         backend:
           service:
-            name: paymet-svc
+            name: payment-svc
             port:
               number: 8080
   ingressClassName: nginx
@@ -79,12 +79,12 @@ spec:
 apiVersion: autoscaling/v2beta1
 kind: HorizontalPodAutoscaler
 metadata:
-  name: paymet-hpa
+  name: payment-hpa
 spec:
   scaleTargetRef:
     apiVersion: apps/v1
     kind: Deployment
-    name: paymet
+    name: payment
   minReplicas: 3
   maxReplicas: 10
   metrics:
